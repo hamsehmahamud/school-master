@@ -1,0 +1,124 @@
+
+rules_version = '2';
+
+service cloud.firestore {
+  match /databases/{database}/documents {
+    
+    // --- Helper Functions ---
+    
+    // Get user data from the users collection by their UID
+    function getUserData(userId) {
+      return get(/databases/$(database)/documents/users/$(userId)).data;
+    }
+    
+    // Check if user is authenticated
+    function isSignedIn() {
+      return request.auth != null;
+    }
+    
+    // Check if the requesting user has the 'main-admin' role
+    function isMainAdmin() {
+      return isSignedIn() && getUserData(request.auth.uid).role == 'main-admin';
+    }
+    
+    // Check if the user is an admin of a specific school
+    function isSchoolAdmin(schoolId) {
+      let userData = getUserData(request.auth.uid);
+      return isSignedIn() && userData.role == 'admin' && userData.schoolId == schoolId;
+    }
+    
+    // Check if the user is a teacher of a specific school
+    function isSchoolTeacher(schoolId) {
+      let userData = getUserData(request.auth.uid);
+      return isSignedIn() && userData.role == 'teacher' && userData.schoolId == schoolId;
+    }
+    
+    // Check if the user is a member (admin or teacher) of a specific school
+    function isSchoolMember(schoolId) {
+      return isSchoolAdmin(schoolId) || isSchoolTeacher(schoolId);
+    }
+    
+    // Check if the user is the owner of a document, identified by their UID.
+    function isOwner(userId) {
+      return isSignedIn() && request.auth.uid == userId;
+    }
+
+    // --- Collection Rules ---
+
+    match /schools/{schoolId} {
+      // Main Admins can do anything.
+      // School members can read their own school's document.
+      allow read: if isMainAdmin() || (isSignedIn() && getUserData(request.auth.uid).schoolId == schoolId);
+      allow write: if isMainAdmin();
+      
+      // --- Subcollections for each school ---
+
+      match /students/{studentId} {
+        // Admins and teachers of the school can read/write student data.
+        allow read, write: if isSchoolMember(schoolId);
+      }
+      
+      match /teachers/{teacherId} {
+      	allow read, write: if isSchoolMember(schoolId);
+      }
+      
+      match /classrooms/{classroomId} {
+        // Admins and teachers of the school can read/write classroom data.
+      	allow read, write: if isSchoolMember(schoolId);
+        
+        match /attendance/{attendanceId} {
+           allow read, write: if isSchoolMember(schoolId);
+        }
+      }
+      
+      match /examResults/{resultId} {
+      	// School members can read all results. They can create/update them.
+        allow read, write: if isSchoolMember(schoolId);
+        
+        // Students and parents should only read their own/their child's results.
+        // This is better enforced by query security in the app code.
+        // A simple rule for added safety:
+        allow read: if isSignedIn() && (
+          request.auth.uid == resource.data.studentId || 
+          getUserData(request.auth.uid).appId == resource.data.student.parentId
+        );
+      }
+      
+      match /payments/{paymentId} {
+      	allow read, write: if isSchoolAdmin(schoolId);
+      }
+
+      match /expenses/{expenseId} {
+        allow read, write: if isSchoolAdmin(schoolId);
+      }
+      
+      match /teacherFinancials/{recordId} {
+      	allow read, write: if isSchoolAdmin(schoolId);
+      }
+
+      match /staffAttendance/{recordId} {
+        allow read, write: if isSchoolAdmin(schoolId);
+      }
+      
+      match /counters/{counterId} {
+      	// Only backend should write to this. Block client writes.
+        allow read: if isSchoolAdmin(schoolId);
+        allow write: if false;
+      }
+    }
+    
+    match /users/{userId} {
+      // A user can read/update their own profile.
+      allow read, update: if isOwner(userId);
+      
+      // Main admin can read any user.
+      allow read: if isMainAdmin();
+      
+      // A school admin can read users belonging to their school.
+      allow read: if isSchoolAdmin(get(/databases/$(database)/documents/users/$(userId)).data.schoolId);
+
+      // Only backend should create or delete users
+      allow create, delete: if false;
+    }
+  }
+}

@@ -1,0 +1,181 @@
+
+{
+  "firestore": {
+    "indexes": [
+      {
+        "collectionGroup": "users",
+        "queryScope": "COLLECTION",
+        "fields": [
+          {
+            "fieldPath": "email",
+            "order": "ASCENDING"
+          },
+          {
+            "fieldPath": "role",
+            "order": "ASCENDING"
+          }
+        ]
+      },
+      {
+        "collectionGroup": "users",
+        "queryScope": "COLLECTION",
+        "fields": [
+          {
+            "fieldPath": "email",
+            "order": "ASCENDING"
+          },
+          {
+            "fieldPath": "role",
+            "order": "ASCENDING"
+          },
+          {
+            "fieldPath": "schoolId",
+            "order": "ASCENDING"
+          }
+        ]
+      },
+      {
+        "collectionGroup": "users",
+        "queryScope": "COLLECTION",
+        "fields": [
+          {
+            "fieldPath": "appId",
+            "order": "ASCENDING"
+          },
+          {
+            "fieldPath": "role",
+            "order": "ASCENDING"
+          },
+          {
+            "fieldPath": "schoolId",
+            "order": "ASCENDING"
+          }
+        ]
+      },
+      {
+        "collectionGroup": "users",
+        "queryScope": "COLLECTION",
+        "fields": [
+          {
+            "fieldPath": "phoneNumber",
+            "order": "ASCENDING"
+          },
+          {
+            "fieldPath": "role",
+            "order": "ASCENDING"
+          },
+          {
+            "fieldPath": "schoolId",
+            "order": "ASCENDING"
+          }
+        ]
+      },
+      {
+        "collectionGroup": "students",
+        "queryScope": "COLLECTION",
+        "fields": [
+          {
+            "fieldPath": "parentContact",
+            "order": "ASCENDING"
+          },
+          {
+            "fieldPath": "schoolId",
+            "order": "ASCENDING"
+          }
+        ]
+      },
+      {
+        "collectionGroup": "examResults",
+        "queryScope": "COLLECTION",
+        "fields": [
+          {
+            "fieldPath": "studentId",
+            "order": "ASCENDING"
+          },
+          {
+            "fieldPath": "academicYear",
+            "order": "ASCENDING"
+          },
+          {
+            "fieldPath": "examType",
+            "order": "ASCENDING"
+          }
+        ]
+      },
+      {
+        "collectionGroup": "examResults",
+        "queryScope": "COLLECTION",
+        "fields": [
+          {
+            "fieldPath": "studentId",
+            "order": "ASCENDING"
+          },
+          {
+            "fieldPath": "createdAt",
+            "order": "DESCENDING"
+          }
+        ]
+      },
+      {
+        "collectionGroup": "examResults",
+        "queryScope": "COLLECTION",
+        "fields": [
+          {
+            "fieldPath": "classroomName",
+            "order": "ASCENDING"
+          },
+          {
+            "fieldPath": "academicYear",
+            "order": "ASCENDING"
+          },
+          {
+            "fieldPath": "createdAt",
+            "order": "DESCENDING"
+          }
+        ]
+      },
+      {
+        "collectionGroup": "examResults",
+        "queryScope": "COLLECTION",
+        "fields": [
+          {
+            "fieldPath": "classroomName",
+            "order": "ASCENDING"
+          },
+          {
+            "fieldPath": "academicYear",
+            "order": "ASCENDING"
+          },
+          {
+            "fieldPath": "examType",
+            "order": "ASCENDING"
+          },
+          {
+            "fieldPath": "createdAt",
+            "order": "DESCENDING"
+          }
+        ]
+      },
+      {
+        "collectionGroup": "staffAttendance",
+        "queryScope": "COLLECTION",
+        "fields": [
+          {
+            "fieldPath": "date",
+            "order": "ASCENDING"
+          }
+        ]
+      },
+      {
+        "collectionGroup": "teacherFinancials",
+        "queryScope": "COLLECTION",
+        "fields": [
+          {
+            "fieldPath": "month",
+            "order": "ASCENDING"
+          }
+        ]
+      }
+    ]
+  }
+}
