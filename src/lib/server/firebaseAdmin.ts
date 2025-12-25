@@ -29,7 +29,12 @@ export function initializeFirebaseAdmin() {
     db = admin.firestore();
     auth = admin.auth();
   } catch (error: any) {
-    console.error('CRITICAL: Firebase Admin SDK initialization failed.', error);
+    console.error('CRITICAL: Firebase Admin SDK initialization failed.');
+    if (error instanceof SyntaxError) {
+      console.error("JSON Parsing Error for FIREBASE_SERVICE_ACCOUNT_KEY. Please ensure it is a valid JSON string.");
+    } else {
+      console.error(error);
+    }
     initializationError = error;
     // Do not re-throw here, as it can crash the server process on startup.
     // Instead, allow getDb/getAuth to handle the uninitialized state.
